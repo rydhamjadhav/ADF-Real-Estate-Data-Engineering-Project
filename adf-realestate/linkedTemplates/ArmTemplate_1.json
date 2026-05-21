@@ -1,0 +1,143 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-realestate"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/df_Validate_Transaction')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Quality check — split valid vs invalid transaction rows",
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_stg_Transactions",
+								"type": "DatasetReference"
+							},
+							"name": "SourceTransaction"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_stg_Transactions",
+								"type": "DatasetReference"
+							},
+							"name": "SinkValidRows"
+						},
+						{
+							"dataset": {
+								"referenceName": "ds_Blob_ErrorTransaction",
+								"type": "DatasetReference"
+							},
+							"name": "SinkErrorRows"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AddValidaFlage"
+						},
+						{
+							"name": "SplitRows"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          TransactionID as string,",
+						"          ListingID as string,",
+						"          AgentID as string,",
+						"          PropertyID as string,",
+						"          OfferDate as string,",
+						"          ClosingDate as string,",
+						"          SalePrice as string,",
+						"          stg_LoadDate as timestamp,",
+						"          stg_FileName as string,",
+						"          stg_IsValid as boolean",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> SourceTransaction",
+						"SourceTransaction derive(IsValid = iif(\r",
+						"  !isNull(TransactionID)\r",
+						"  && !isNull(SalePrice)\r",
+						"  && toFloat(SalePrice) > 0\r",
+						"  && !isNull(OfferDate)\r",
+						"  && !isNull(ClosingDate),\r",
+						"  1, 0\r",
+						"),",
+						"          DaysToClose = toInteger(toDate(ClosingDate) - toDate(OfferDate))) ~> AddValidaFlage",
+						"AddValidaFlage split(IsValid==1,",
+						"     disjoint: false) ~> SplitRows@(ValidRows, InvalidRows)",
+						"SplitRows@ValidRows sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          TransactionID as string,",
+						"          ListingID as string,",
+						"          AgentID as string,",
+						"          PropertyID as string,",
+						"          OfferDate as string,",
+						"          ClosingDate as string,",
+						"          SalePrice as string,",
+						"          stg_LoadDate as timestamp,",
+						"          stg_FileName as string,",
+						"          stg_IsValid as boolean",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     truncate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          TransactionID,",
+						"          ListingID,",
+						"          AgentID,",
+						"          PropertyID,",
+						"          OfferDate,",
+						"          ClosingDate,",
+						"          SalePrice,",
+						"          stg_LoadDate,",
+						"          stg_FileName,",
+						"          stg_IsValid",
+						"     )) ~> SinkValidRows",
+						"SplitRows@InvalidRows sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          TransactionID,",
+						"          ListingID,",
+						"          AgentID,",
+						"          PropertyID,",
+						"          OfferDate,",
+						"          ClosingDate,",
+						"          SalePrice,",
+						"          stg_LoadDate,",
+						"          stg_FileName,",
+						"          stg_IsValid,",
+						"          IsValid,",
+						"          DaysToClose",
+						"     )) ~> SinkErrorRows"
+					]
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

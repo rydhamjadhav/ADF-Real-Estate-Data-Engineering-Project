@@ -1065,133 +1065,1562 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_Validate_Transaction')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
+			"name": "[concat(parameters('factoryName'), '/pl_IngestRawToStaging')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Quality check — split valid vs invalid transaction rows",
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ds_stg_Transactions",
-								"type": "DatasetReference"
-							},
-							"name": "SourceTransaction"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "ds_stg_Transactions",
-								"type": "DatasetReference"
-							},
-							"name": "SinkValidRows"
+				"description": "Load all 8 source CSVs from Blob to SQL staging",
+				"activities": [
+					{
+						"name": "SetStartTime",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
 						},
-						{
-							"dataset": {
-								"referenceName": "ds_Blob_ErrorTransaction",
-								"type": "DatasetReference"
-							},
-							"name": "SinkErrorRows"
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "PipelineStartTime",
+							"value": {
+								"value": "@utcNow()",
+								"type": "Expression"
+							}
 						}
-					],
-					"transformations": [
-						{
-							"name": "AddValidaFlage"
+					},
+					{
+						"name": "Copy_Agents",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SetStartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
 						},
-						{
-							"name": "SplitRows"
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": {
+									"value": "TRUNCATE TABLE stg.Agents",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Warning",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "ls_BlobStorage",
+										"type": "LinkedServiceReference"
+									}
+								}
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "AgentID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AgentID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "AgentName",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AgentName",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Region",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Region",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "JoinDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "JoinDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ExperienceYears",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ExperienceYears",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_Blob_Agent",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_stg_Agents",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy_Campaigns",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SetStartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": {
+									"value": "TRUNCATE TABLE stg.Campaigns",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Warning",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "ls_BlobStorage",
+										"type": "LinkedServiceReference"
+									}
+								}
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "CampaignID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "CampaignID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "StartDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "StartDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "EndDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "EndDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Channel",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Channel",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Cost",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Cost",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_Blob_Campaigns",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_stg_Campaigns",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy_Leads",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SetStartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": {
+									"value": "TRUNCATE TABLE stg.Leads\n",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Warning",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "ls_BlobStorage",
+										"type": "LinkedServiceReference"
+									}
+								}
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "LeadID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "LeadID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "LeadDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "LeadDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Source",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Source",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "LeadScore",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "LeadScore",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_Blob_Leads",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_stg_Leads",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy_Listings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SetStartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": {
+									"value": "TRUNCATE TABLE stg.Listings",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Warning",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "ls_BlobStorage",
+										"type": "LinkedServiceReference"
+									}
+								}
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "PropertyID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "PropertyID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "AgentID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AgentID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ListDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ListDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "AskingPrice",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AskingPrice",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Currency",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Currency",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "EndDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "EndDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_Blob_Listings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_stg_Listings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy_Offers",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SetStartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": {
+									"value": "TRUNCATE TABLE stg.Offers",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Warning",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "ls_BlobStorage",
+										"type": "LinkedServiceReference"
+									}
+								}
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "OfferID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "OfferID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "OfferDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "OfferDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "OfferPrice",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "OfferPrice",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "OfferStatus",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "OfferStatus",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_Blob_Offers",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_stg_Offers",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy_Properties",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SetStartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": {
+									"value": "TRUNCATE TABLE stg.Properties",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Warning",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "ls_BlobStorage",
+										"type": "LinkedServiceReference"
+									}
+								}
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "PropertyID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "PropertyID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Region",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Region",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "PropertyType",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "PropertyType",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Bedrooms",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Bedrooms",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Bathrooms",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Bathrooms",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "AreaSqft",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AreaSqft",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "YearBuilt",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "YearBuilt",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_Blob_Properties",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_stg_Properties",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy_Transactions",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": {
+									"value": "TRUNCATE TABLE stg.Transactions",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Warning",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "ls_BlobStorage",
+										"type": "LinkedServiceReference"
+									}
+								}
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "TransactionID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TransactionID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "AgentID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AgentID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "PropertyID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "PropertyID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "OfferDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "OfferDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ClosingDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ClosingDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "SalePrice",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SalePrice",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_Blob_Transactions",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_stg_Transactions",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy_Viewings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SetStartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": {
+									"value": "TRUNCATE TABLE stg.Viewings",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Warning",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "ls_BlobStorage",
+										"type": "LinkedServiceReference"
+									}
+								}
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ViewingID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ViewingID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ListingID",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ViewingDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ViewingDate",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "DurationMinutes",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "DurationMinutes",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Feedback",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Feedback",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_Blob_Viewings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_stg_Viewings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "SP_LogSuccess",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Copy_Listings",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Copy_Agents",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Copy_Offers",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Copy_Campaigns",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Copy_Leads",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Copy_Transactions",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Copy_Properties",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Copy_Viewings",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[stg].[usp_Log_PipelineRun]",
+							"storedProcedureParameters": {
+								"PipelineName": {
+									"value": {
+										"value": "@{pipeline().Pipeline}",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RunID": {
+									"value": {
+										"value": "@{pipeline().RunId}",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SourceTable": {
+									"value": "Blob_RawFiles",
+									"type": "String"
+								},
+								"TargetTable": {
+									"value": "stg.AllTables",
+									"type": "String"
+								},
+								"RowsRead": {
+									"value": "0",
+									"type": "Int32"
+								},
+								"RowsLoaded": {
+									"value": "0",
+									"type": "Int32"
+								},
+								"RowsRejected": {
+									"value": "0",
+									"type": "Int32"
+								},
+								"Status": {
+									"value": "Success",
+									"type": "String"
+								},
+								"ErrorMessage": {
+									"value": "No Errors",
+									"type": "String"
+								},
+								"StartTime": {
+									"value": {
+										"value": "@{variables('PipelineStartTime')}",
+										"type": "Expression"
+									},
+									"type": "Datetime"
+								},
+								"EndTime": {
+									"value": {
+										"value": "@{utcNow()}",
+										"type": "Expression"
+									},
+									"type": "Datetime"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_AzureSQL",
+							"type": "LinkedServiceReference"
 						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          TransactionID as string,",
-						"          ListingID as string,",
-						"          AgentID as string,",
-						"          PropertyID as string,",
-						"          OfferDate as string,",
-						"          ClosingDate as string,",
-						"          SalePrice as string,",
-						"          stg_LoadDate as timestamp,",
-						"          stg_FileName as string,",
-						"          stg_IsValid as boolean",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> SourceTransaction",
-						"SourceTransaction derive(IsValid = iif(\r",
-						"  !isNull(TransactionID)\r",
-						"  && !isNull(SalePrice)\r",
-						"  && toFloat(SalePrice) > 0\r",
-						"  && !isNull(OfferDate)\r",
-						"  && !isNull(ClosingDate),\r",
-						"  1, 0\r",
-						"),",
-						"          DaysToClose = toInteger(toDate(ClosingDate) - toDate(OfferDate))) ~> AddValidaFlage",
-						"AddValidaFlage split(IsValid==1,",
-						"     disjoint: false) ~> SplitRows@(ValidRows, InvalidRows)",
-						"SplitRows@ValidRows sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          TransactionID as string,",
-						"          ListingID as string,",
-						"          AgentID as string,",
-						"          PropertyID as string,",
-						"          OfferDate as string,",
-						"          ClosingDate as string,",
-						"          SalePrice as string,",
-						"          stg_LoadDate as timestamp,",
-						"          stg_FileName as string,",
-						"          stg_IsValid as boolean",
-						"     ),",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     truncate:true,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError',",
-						"     mapColumn(",
-						"          TransactionID,",
-						"          ListingID,",
-						"          AgentID,",
-						"          PropertyID,",
-						"          OfferDate,",
-						"          ClosingDate,",
-						"          SalePrice,",
-						"          stg_LoadDate,",
-						"          stg_FileName,",
-						"          stg_IsValid",
-						"     )) ~> SinkValidRows",
-						"SplitRows@InvalidRows sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          TransactionID,",
-						"          ListingID,",
-						"          AgentID,",
-						"          PropertyID,",
-						"          OfferDate,",
-						"          ClosingDate,",
-						"          SalePrice,",
-						"          stg_LoadDate,",
-						"          stg_FileName,",
-						"          stg_IsValid,",
-						"          IsValid,",
-						"          DaysToClose",
-						"     )) ~> SinkErrorRows"
-					]
-				}
+					},
+					{
+						"name": "SP_LogFailure",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Copy_Listings",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Copy_Agents",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Copy_Offers",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Copy_Campaigns",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Copy_Leads",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Copy_Transactions",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Copy_Properties",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Copy_Viewings",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[stg].[usp_Log_PipelineRun]",
+							"storedProcedureParameters": {
+								"PipelineName": {
+									"value": {
+										"value": "@{pipeline().Pipeline}",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RunID": {
+									"value": {
+										"value": "@{pipeline().RunId}",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SourceTable": {
+									"value": "Blob_RawFiles",
+									"type": "String"
+								},
+								"TargetTable": {
+									"value": "stg.AllTables",
+									"type": "String"
+								},
+								"RowsRead": {
+									"value": "0",
+									"type": "Int32"
+								},
+								"RowsLoaded": {
+									"value": "0",
+									"type": "Int32"
+								},
+								"RowsRejected": {
+									"value": "0",
+									"type": "Int32"
+								},
+								"Status": {
+									"value": "Failed",
+									"type": "String"
+								},
+								"ErrorMessage": {
+									"value": {
+										"value": "@{activity('Copy_Agents').error?.message}",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"StartTime": {
+									"value": {
+										"value": "@{variables('PipelineStartTime')}",
+										"type": "Expression"
+									},
+									"type": "Datetime"
+								},
+								"EndTime": {
+									"value": {
+										"value": "@{utcNow()}",
+										"type": "Expression"
+									},
+									"type": "Datetime"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_AzureSQL",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"PipelineStartTime": {
+						"type": "String"
+					},
+					"PipelineStatus": {
+						"type": "String",
+						"defaultValue": "Running"
+					}
+				},
+				"annotations": []
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_Blob_Agent')]",
+				"[concat(variables('factoryId'), '/datasets/ds_stg_Agents')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Blob_Campaigns')]",
+				"[concat(variables('factoryId'), '/datasets/ds_stg_Campaigns')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Blob_Leads')]",
+				"[concat(variables('factoryId'), '/datasets/ds_stg_Leads')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Blob_Listings')]",
+				"[concat(variables('factoryId'), '/datasets/ds_stg_Listings')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Blob_Offers')]",
+				"[concat(variables('factoryId'), '/datasets/ds_stg_Offers')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Blob_Properties')]",
+				"[concat(variables('factoryId'), '/datasets/ds_stg_Properties')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Blob_Transactions')]",
 				"[concat(variables('factoryId'), '/datasets/ds_stg_Transactions')]",
-				"[concat(variables('factoryId'), '/datasets/ds_Blob_ErrorTransaction')]"
+				"[concat(variables('factoryId'), '/datasets/ds_Blob_Viewings')]",
+				"[concat(variables('factoryId'), '/datasets/ds_stg_Viewings')]",
+				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSQL')]",
+				"[concat(variables('factoryId'), '/linkedServices/ls_BlobStorage')]"
 			]
 		}
 	]
