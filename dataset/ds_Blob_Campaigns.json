@@ -1,0 +1,52 @@
+{
+	"name": "ds_Blob_Campaigns",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_BlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Ds_BlobStorage"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Campaigns_clean.csv",
+				"folderPath": "Campaigns ",
+				"container": "rawdata"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CampaignID",
+				"type": "String"
+			},
+			{
+				"name": "ListingID",
+				"type": "String"
+			},
+			{
+				"name": "StartDate",
+				"type": "String"
+			},
+			{
+				"name": "EndDate",
+				"type": "String"
+			},
+			{
+				"name": "Channel",
+				"type": "String"
+			},
+			{
+				"name": "Cost",
+				"type": "String"
+			}
+		]
+	}
+}

@@ -1,0 +1,48 @@
+{
+	"name": "ds_Blob_Leads",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_BlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Ds_BlobStorage"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Leads_clean.csv",
+				"folderPath": "Leads",
+				"container": "rawdata"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "LeadID",
+				"type": "String"
+			},
+			{
+				"name": "ListingID",
+				"type": "String"
+			},
+			{
+				"name": "LeadDate",
+				"type": "String"
+			},
+			{
+				"name": "Source",
+				"type": "String"
+			},
+			{
+				"name": "LeadScore",
+				"type": "String"
+			}
+		]
+	}
+}

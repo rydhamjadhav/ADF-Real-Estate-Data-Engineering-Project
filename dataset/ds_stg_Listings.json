@@ -1,0 +1,65 @@
+{
+	"name": "ds_stg_Listings",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_AzureSQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SQL_Dataset"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ListingID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PropertyID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AgentID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ListDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Status",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AskingPrice",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Currency",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EndDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "stg_LoadDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "stg_FileName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "stg_IsValid",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "stg",
+			"table": "Listings"
+		}
+	}
+}

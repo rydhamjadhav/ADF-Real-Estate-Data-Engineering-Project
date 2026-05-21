@@ -1,0 +1,48 @@
+{
+	"name": "ds_Blob_Offers",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_BlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Ds_BlobStorage"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Offers_clean.csv",
+				"folderPath": "Offers",
+				"container": "rawdata"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "OfferID",
+				"type": "String"
+			},
+			{
+				"name": "ListingID",
+				"type": "String"
+			},
+			{
+				"name": "OfferDate",
+				"type": "String"
+			},
+			{
+				"name": "OfferPrice",
+				"type": "String"
+			},
+			{
+				"name": "OfferStatus",
+				"type": "String"
+			}
+		]
+	}
+}

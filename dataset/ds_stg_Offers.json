@@ -1,0 +1,53 @@
+{
+	"name": "ds_stg_Offers",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_AzureSQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SQL_Dataset"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "OfferID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ListingID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OfferDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OfferPrice",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OfferStatus",
+				"type": "nvarchar"
+			},
+			{
+				"name": "stg_LoadDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "stg_FileName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "stg_IsValid",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "stg",
+			"table": "Offers"
+		}
+	}
+}

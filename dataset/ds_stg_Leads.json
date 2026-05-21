@@ -1,0 +1,53 @@
+{
+	"name": "ds_stg_Leads",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_AzureSQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SQL_Dataset"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "LeadID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ListingID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LeadDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Source",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LeadScore",
+				"type": "nvarchar"
+			},
+			{
+				"name": "stg_LoadDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "stg_FileName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "stg_IsValid",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "stg",
+			"table": "Leads"
+		}
+	}
+}

@@ -1,0 +1,60 @@
+{
+	"name": "ds_Blob_Listings",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_BlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Ds_BlobStorage"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Listings_clean.csv",
+				"folderPath": "Listings",
+				"container": "rawdata"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ListingID",
+				"type": "String"
+			},
+			{
+				"name": "PropertyID",
+				"type": "String"
+			},
+			{
+				"name": "AgentID",
+				"type": "String"
+			},
+			{
+				"name": "ListDate",
+				"type": "String"
+			},
+			{
+				"name": "Status",
+				"type": "String"
+			},
+			{
+				"name": "AskingPrice",
+				"type": "String"
+			},
+			{
+				"name": "Currency",
+				"type": "String"
+			},
+			{
+				"name": "EndDate",
+				"type": "String"
+			}
+		]
+	}
+}

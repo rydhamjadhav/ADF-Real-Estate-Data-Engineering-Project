@@ -1,0 +1,52 @@
+{
+	"name": "ds_Blob_Agent",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_BlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Ds_BlobStorage"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Agents_clean.csv",
+				"folderPath": "Agents",
+				"container": "rawdata"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "AgentID",
+				"type": "String"
+			},
+			{
+				"name": "AgentName",
+				"type": "String"
+			},
+			{
+				"name": "Region",
+				"type": "String"
+			},
+			{
+				"name": "City",
+				"type": "String"
+			},
+			{
+				"name": "JoinDate",
+				"type": "String"
+			},
+			{
+				"name": "ExperienceYears",
+				"type": "String"
+			}
+		]
+	}
+}
