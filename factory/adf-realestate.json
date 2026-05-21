@@ -1,0 +1,15 @@
+{
+	"name": "adf-realestate",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Enabled",
+			"editable": true
+		}
+	},
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "2fbd0036-5ecb-4740-b1e5-4a72f9bea41b",
+		"tenantId": "3732c42a-aabe-4801-bc1f-fb0555372f50"
+	}
+}
