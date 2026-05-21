@@ -138,6 +138,160 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_Transform_StagingToDW')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_ValidateTransactions",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_Validate_Transaction",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"SourceTransaction": {},
+									"SinkValidRows": {},
+									"SinkErrorRows": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "sp_LoadDimDate",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "df_ValidateTransactions",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dwh].[usp_Load_dim_Date]"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_AzureSQL",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sp_LoadDimAgent",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dwh].[usp_Load_dim_Agent]"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_AzureSQL",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sp_LoadDimProperty",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dwh].[usp_Load_dim_Property]"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_AzureSQL",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sp_LoadDimListing",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dwh].[usp_Load_dim_Listing]"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_AzureSQL",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "sp_LoadDimCampaign",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:30:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dwh].[usp_Load_dim_Campaign]"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_AzureSQL",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_Validate_Transaction')]"
+			]
 		}
 	]
 }
