@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-realestate"
+		},
+		"ls_AzureSQL_password": {
+			"value": ""
+		},
+		"ls_BlobStorage_connectionString": {
+			"value": ""
+		},
+		"ls_AzureSQL_properties_typeProperties_server": {
+			"value": "sqlrealestate.database.windows.net"
+		},
+		"ls_AzureSQL_properties_typeProperties_database": {
+			"value": "realestate-dwh"
+		},
+		"ls_AzureSQL_properties_typeProperties_userName": {
+			"value": "adminn"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

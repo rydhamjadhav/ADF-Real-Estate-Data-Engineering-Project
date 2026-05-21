@@ -1,0 +1,73 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-realestate"
+		},
+		"ls_AzureSQL_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_AzureSQL'"
+		},
+		"ls_BlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_BlobStorage'"
+		},
+		"ls_AzureSQL_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlrealestate.database.windows.net"
+		},
+		"ls_AzureSQL_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "realestate-dwh"
+		},
+		"ls_AzureSQL_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminn"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_AzureSQL')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "To connect Azure SQL ",
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('ls_AzureSQL_properties_typeProperties_server')]",
+					"database": "[parameters('ls_AzureSQL_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_AzureSQL_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_AzureSQL_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_BlobStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "To connect raw csv files",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_BlobStorage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
