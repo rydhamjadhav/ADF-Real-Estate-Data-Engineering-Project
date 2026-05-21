@@ -68,6 +68,974 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Blob_Agent')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_BlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Ds_BlobStorage"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Agents_clean.csv",
+						"folderPath": "Agents",
+						"container": "rawdata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "AgentID",
+						"type": "String"
+					},
+					{
+						"name": "AgentName",
+						"type": "String"
+					},
+					{
+						"name": "Region",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "JoinDate",
+						"type": "String"
+					},
+					{
+						"name": "ExperienceYears",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_BlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Blob_Campaigns')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_BlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Ds_BlobStorage"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Campaigns_clean.csv",
+						"folderPath": "Campaigns ",
+						"container": "rawdata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "CampaignID",
+						"type": "String"
+					},
+					{
+						"name": "ListingID",
+						"type": "String"
+					},
+					{
+						"name": "StartDate",
+						"type": "String"
+					},
+					{
+						"name": "EndDate",
+						"type": "String"
+					},
+					{
+						"name": "Channel",
+						"type": "String"
+					},
+					{
+						"name": "Cost",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_BlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Blob_Leads')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_BlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Ds_BlobStorage"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Leads_clean.csv",
+						"folderPath": "Leads",
+						"container": "rawdata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "LeadID",
+						"type": "String"
+					},
+					{
+						"name": "ListingID",
+						"type": "String"
+					},
+					{
+						"name": "LeadDate",
+						"type": "String"
+					},
+					{
+						"name": "Source",
+						"type": "String"
+					},
+					{
+						"name": "LeadScore",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_BlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Blob_Listings')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_BlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Ds_BlobStorage"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Listings_clean.csv",
+						"folderPath": "Listings",
+						"container": "rawdata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ListingID",
+						"type": "String"
+					},
+					{
+						"name": "PropertyID",
+						"type": "String"
+					},
+					{
+						"name": "AgentID",
+						"type": "String"
+					},
+					{
+						"name": "ListDate",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					},
+					{
+						"name": "AskingPrice",
+						"type": "String"
+					},
+					{
+						"name": "Currency",
+						"type": "String"
+					},
+					{
+						"name": "EndDate",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_BlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Blob_Offers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_BlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Ds_BlobStorage"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Offers_clean.csv",
+						"folderPath": "Offers",
+						"container": "rawdata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "OfferID",
+						"type": "String"
+					},
+					{
+						"name": "ListingID",
+						"type": "String"
+					},
+					{
+						"name": "OfferDate",
+						"type": "String"
+					},
+					{
+						"name": "OfferPrice",
+						"type": "String"
+					},
+					{
+						"name": "OfferStatus",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_BlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Blob_Properties')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_BlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Ds_BlobStorage"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Properties_clean.csv",
+						"folderPath": "Properties",
+						"container": "rawdata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "PropertyID",
+						"type": "String"
+					},
+					{
+						"name": "Region",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "PropertyType",
+						"type": "String"
+					},
+					{
+						"name": "Bedrooms",
+						"type": "String"
+					},
+					{
+						"name": "Bathrooms",
+						"type": "String"
+					},
+					{
+						"name": "AreaSqft",
+						"type": "String"
+					},
+					{
+						"name": "YearBuilt",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_BlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Blob_Transactions')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_BlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Ds_BlobStorage"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Transactions_clean.csv",
+						"folderPath": "Transactions",
+						"container": "rawdata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "TransactionID",
+						"type": "String"
+					},
+					{
+						"name": "ListingID",
+						"type": "String"
+					},
+					{
+						"name": "AgentID",
+						"type": "String"
+					},
+					{
+						"name": "PropertyID",
+						"type": "String"
+					},
+					{
+						"name": "OfferDate",
+						"type": "String"
+					},
+					{
+						"name": "ClosingDate",
+						"type": "String"
+					},
+					{
+						"name": "SalePrice",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_BlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Blob_Viewings')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_BlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Ds_BlobStorage"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Viewings_clean.csv",
+						"folderPath": "Viewings",
+						"container": "rawdata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ViewingID",
+						"type": "String"
+					},
+					{
+						"name": "ListingID",
+						"type": "String"
+					},
+					{
+						"name": "ViewingDate",
+						"type": "String"
+					},
+					{
+						"name": "DurationMinutes",
+						"type": "String"
+					},
+					{
+						"name": "Feedback",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_BlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_stg_Agents')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL_Dataset"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AgentID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AgentName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "JoinDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ExperienceYears",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_LoadDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "stg_FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_IsValid",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Agents"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_stg_Campaigns')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL_Dataset"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CampaignID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ListingID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StartDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EndDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Channel",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cost",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_LoadDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "stg_FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_IsValid",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Campaigns"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_stg_Leads')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL_Dataset"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "LeadID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ListingID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LeadDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Source",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LeadScore",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_LoadDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "stg_FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_IsValid",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Leads"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_stg_Listings')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL_Dataset"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ListingID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PropertyID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AgentID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ListDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AskingPrice",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Currency",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EndDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_LoadDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "stg_FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_IsValid",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Listings"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_stg_Offers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL_Dataset"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "OfferID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ListingID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "OfferDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "OfferPrice",
+						"type": "nvarchar"
+					},
+					{
+						"name": "OfferStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_LoadDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "stg_FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_IsValid",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Offers"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_stg_Properties')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL_Dataset"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PropertyID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PropertyType",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Bedrooms",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Bathrooms",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AreaSqft",
+						"type": "nvarchar"
+					},
+					{
+						"name": "YearBuilt",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_LoadDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "stg_FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_IsValid",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Properties"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_stg_Transactions')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL_Dataset"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TransactionID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ListingID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AgentID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PropertyID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "OfferDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ClosingDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalePrice",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_LoadDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "stg_FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_IsValid",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Transactions"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_stg_Viewings')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL_Dataset"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ViewingID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ListingID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ViewingDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DurationMinutes",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Feedback",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_LoadDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "stg_FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stg_IsValid",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Viewings"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSQL')]"
+			]
 		}
 	]
 }
