@@ -1,0 +1,139 @@
+{
+	"name": "pl_Master_RealEstate_ETL",
+	"properties": {
+		"description": "Master orchestrator — runs Ingest then Transform end-to-end",
+		"activities": [
+			{
+				"name": "Run_Ingest",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_IngestRawToStaging",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Run_Transform",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Run_Ingest",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_Transform_StagingToDW",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sp_MasterLogFailure",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Run_Transform",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Run_Ingest",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:30:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[stg].[usp_Log_PipelineRun]",
+					"storedProcedureParameters": {
+						"PiepelineName": {
+							"value": {
+								"value": "@{pipeline().Pipeline}",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"RunID": {
+							"value": {
+								"value": "@{pipeline().RunId}",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"SourceTable": {
+							"value": "Blob_RawFiles",
+							"type": "String"
+						},
+						"TargetTable": {
+							"value": "stg.AllTables",
+							"type": "String"
+						},
+						"RowsRead": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"RowsLoaded": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"RowsRejected": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"Status": {
+							"value": "Failed",
+							"type": "String"
+						},
+						"ErrorMessage": {
+							"value": "@{activity('RUN_Ingest').error?.message}",
+							"type": "String"
+						},
+						"StartTime": {
+							"value": {
+								"value": "@utcNow()",
+								"type": "Expression"
+							},
+							"type": "Datetime"
+						},
+						"EndTime": {
+							"value": {
+								"value": "@{utcNow()}",
+								"type": "Expression"
+							},
+							"type": "Datetime"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
