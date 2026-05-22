@@ -1,7 +1,0 @@
-{
-	"name": "pl_Master_RealEstate_ETL",
-	"properties": {
-		"description": " Master orchestrator — runs Ingest then Transform end-to-end",
-		"annotations": []
-	}
-}
